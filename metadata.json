@@ -1,0 +1,6 @@
+{
+  "name": "Motion Studio AI",
+  "description": "Studio Motion Control video generator and backend API explorer for character animation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

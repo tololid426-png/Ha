@@ -1,0 +1,348 @@
+[
+  {
+    "id": "job_1791187406210_cy2gf",
+    "jobTitle": "Job #1 (Foto Kustom + Video Kustom)",
+    "status": "FAILED",
+    "createdAt": 1791187406210,
+    "expiresAt": null,
+    "created_at_formatted": "05 Okt 2026, 08.03",
+    "step": "Gagal",
+    "apiKey": "6d086c8b6789490688c2cf9dc7b447f4",
+    "apiKeysPool": [
+      "6d086c8b6789490688c2cf9dc7b447f4",
+      "2012067428a646e795b54189bd6f9cc1",
+      "772d2626d0a8444288319a189f2a1027",
+      "bf497608531e4504bd2d2706dc21773e",
+      "6decfe594a4b4f7da02fa5252f400364",
+      "77dcee8acfee4803b585938fc7ce9b73",
+      "69f92da839e447f8826b626f062f5d12",
+      "870bc232d5b24143851548f35e28e45f",
+      "ea57ea13c02343b8821fac90ea1cb716",
+      "e4a6cdda57cb4791835b765cc2d8e0ee",
+      "66c4f0fa4cf74d879c51958548763d88",
+      "3aa0b12d030f46788e19223b6a3eb60e",
+      "817c897238dd40edbd4ca7ca683cf0c6",
+      "1cc7841f6a99475d9afa14c990009520",
+      "02151f5f908441c7ba13da05e07b9301",
+      "345bbdf5463947e9960d24fb4438f035",
+      "6fba046571ee453e9f964c3698a3df87",
+      "872162ad256d446482cd4c2611ef7b77",
+      "e007ceaf69624a2cad180e905cd95b50",
+      "0a4e6b2fe2134a8581a2718391ba3bb1",
+      "ff735eb54ed1423caaf8a9dede489330"
+    ],
+    "webappId": "2083908699113918465",
+    "nodeInfoList": [
+      {
+        "nodeId": "30",
+        "fieldName": "image",
+        "fieldValue": "api/a49d6b4b1220b644b3f48951b6835ffa0a8ffcbfdbefa8e867cf92d1dd3b2fae.jpg"
+      },
+      {
+        "nodeId": "33",
+        "fieldName": "video",
+        "fieldValue": "api/8e161e9205f4fcefabc500545e130d5dbb48ffc7520786da57168e1e267b4747.mp4"
+      },
+      {
+        "nodeId": "331",
+        "fieldName": "steps",
+        "fieldValue": "8"
+      },
+      {
+        "nodeId": "331",
+        "fieldName": "seed",
+        "fieldValue": "389977001"
+      }
+    ],
+    "totalRunningCount": 0,
+    "totalWaitingInQueue": 0,
+    "runninghubTaskId": "2107018896941039617",
+    "errorMessage": "Waktu render melebihi batas (Timeout)."
+  },
+  {
+    "id": "job_1791190273570_8ibc4",
+    "jobTitle": "Job #5 (Foto Kustom + Video Kustom)",
+    "status": "FAILED",
+    "createdAt": 1791190273570,
+    "expiresAt": null,
+    "created_at_formatted": "05 Okt 2026, 08.51",
+    "step": "Gagal",
+    "apiKey": "84851aa3cc434508a8b4e94825b2a271",
+    "apiKeysPool": [],
+    "webappId": "2083908699113918465",
+    "nodeInfoList": [
+      {
+        "nodeId": "30",
+        "fieldName": "image",
+        "fieldValue": "api/9ba960e1c2cff255aa681467a0dfe277c7ad3a6abd9c49db9051b0e43d7dfa6b.png"
+      },
+      {
+        "nodeId": "33",
+        "fieldName": "video",
+        "fieldValue": "api/e11f5f91b0f1b13edce0bbe05e56bb37e7bac8611be6595cd20c64eed2977fca.mp4"
+      },
+      {
+        "nodeId": "331",
+        "fieldName": "steps",
+        "fieldValue": "8"
+      },
+      {
+        "nodeId": "331",
+        "fieldName": "seed",
+        "fieldValue": "999592973"
+      }
+    ],
+    "totalRunningCount": 0,
+    "totalWaitingInQueue": 0,
+    "runninghubTaskId": "2107046463999885313",
+    "errorMessage": "USER_BANNED"
+  },
+  {
+    "id": "job_1791190974634_ppncw",
+    "jobTitle": "Job #6 (Foto Kustom + Video Kustom)",
+    "status": "FAILED",
+    "createdAt": 1791190974634,
+    "expiresAt": null,
+    "created_at_formatted": "05 Okt 2026, 09.02",
+    "step": "Gagal",
+    "apiKey": "0096a0e722614d68a8714c3757b71de2",
+    "apiKeysPool": [],
+    "webappId": "2083908699113918465",
+    "nodeInfoList": [
+      {
+        "nodeId": "30",
+        "fieldName": "image",
+        "fieldValue": "api/a49d6b4b1220b644b3f48951b6835ffa0a8ffcbfdbefa8e867cf92d1dd3b2fae.jpg"
+      },
+      {
+        "nodeId": "33",
+        "fieldName": "video",
+        "fieldValue": "api/6f3e3ea40090b6c0a3bdac956a83b06d3fe5da207e8869312d1308665045771a.mp4"
+      },
+      {
+        "nodeId": "331",
+        "fieldName": "steps",
+        "fieldValue": "8"
+      },
+      {
+        "nodeId": "331",
+        "fieldName": "seed",
+        "fieldValue": "390581253"
+      }
+    ],
+    "totalRunningCount": 0,
+    "totalWaitingInQueue": 0,
+    "errorMessage": "Semua API Key RunningHub di pool Anda telah diblokir/banned. Silakan tambahkan API Key aktif yang baru."
+  },
+  {
+    "id": "job_1792029471625_6do4j",
+    "jobTitle": "Job #4 (Foto Kustom + Video Kustom)",
+    "status": "FAILED",
+    "createdAt": 1792029471625,
+    "expiresAt": null,
+    "created_at_formatted": "15 Okt 2026, 01.57",
+    "step": "Gagal",
+    "apiKey": "5b9343b64f66474ea01337cedbc1196f",
+    "apiKeysPool": [
+      "3b0033a7bdce4f31a686581db63ef097",
+      "c485b84c79264d958864b1fbc3042735",
+      "fc0734d0f54340d694d92d405914565f",
+      "5b9343b64f66474ea01337cedbc1196f",
+      "0eeae9b7dc8c44c98e1a53d69677fa16",
+      "3303c0011efd43a492f99b9a6de6e212",
+      "89553f1994f04b49bbddf55c208e729b"
+    ],
+    "webappId": "2083908699113918465",
+    "nodeInfoList": [
+      {
+        "nodeId": "30",
+        "fieldName": "image",
+        "fieldValue": "api/e8f4e8efd6f907b0ea845e05f02ef5203bd2cd2cad1c7deeb7979334d556fa23.jpg"
+      },
+      {
+        "nodeId": "33",
+        "fieldName": "video",
+        "fieldValue": "api/6f3e3ea40090b6c0a3bdac956a83b06d3fe5da207e8869312d1308665045771a.mp4"
+      }
+    ],
+    "thumbnailFileName": "thumb_job_1792029471625_6do4j.jpeg",
+    "thumbnailUrl": "/storage/thumbnails/thumb_job_1792029471625_6do4j.jpeg",
+    "characterImageUrl": "/storage/thumbnails/thumb_job_1792029471625_6do4j.jpeg",
+    "totalRunningCount": 0,
+    "totalWaitingInQueue": 0,
+    "errorMessage": "Gagal pada tahap Super-Resolution (ImageResizeKJv2). Resolusi foto/video input terlalu besar atau tidak genap. Sistem kini otomatis menormalisasi resolusi ke 1080p. Silakan ulangi (Retry).",
+    "runninghubTaskId": "2110777669894324226"
+  },
+  {
+    "id": "job_1792083679968_4ns29",
+    "jobTitle": "Job #5 (Foto Kustom + Video Kustom)",
+    "status": "SUCCESS",
+    "createdAt": 1792083679968,
+    "expiresAt": 1792256900402,
+    "created_at_formatted": "15 Okt 2026, 17.01",
+    "step": "Selesai (Tersimpan selama 48 jam)",
+    "apiKey": "5b9343b64f66474ea01337cedbc1196f",
+    "apiKeysPool": [
+      "5b9343b64f66474ea01337cedbc1196f",
+      "3b0033a7bdce4f31a686581db63ef097",
+      "c485b84c79264d958864b1fbc3042735",
+      "fc0734d0f54340d694d92d405914565f",
+      "0eeae9b7dc8c44c98e1a53d69677fa16",
+      "3303c0011efd43a492f99b9a6de6e212",
+      "89553f1994f04b49bbddf55c208e729b"
+    ],
+    "webappId": "2098087538199212034",
+    "nodeInfoList": [
+      {
+        "nodeId": "30",
+        "fieldName": "image",
+        "fieldValue": "api/8fab57c60bd5aac2d587822fb6e4c2d7fb61f71c6f5ed0f8f2798bdde3ffa39d.jpg"
+      },
+      {
+        "nodeId": "33",
+        "fieldName": "video",
+        "fieldValue": "api/8d40b4dfc36c777af2500e43a9b810adc36fa4b6cdd6664c569d09971699b243.mp4"
+      }
+    ],
+    "thumbnailFileName": "thumb_job_1792083679968_4ns29.jpeg",
+    "thumbnailUrl": "/storage/thumbnails/thumb_job_1792083679968_4ns29.jpeg",
+    "characterImageUrl": "/storage/thumbnails/thumb_job_1792083679968_4ns29.jpeg",
+    "totalRunningCount": 0,
+    "totalWaitingInQueue": 0,
+    "runninghubTaskId": "2110778060203671554",
+    "consumeCoins": 82,
+    "remoteVideoUrl": "https://rh-hk-images.xiaoyaoyou.com/5f193b35800a851fe5ee5bce52373d14/output/EPO_MC736p_00001_p82-audio_ksvjs_1792084076.mp4",
+    "videoFileName": "video_job_1792083679968_4ns29.mp4",
+    "videoUrl": "/storage/videos/video_job_1792083679968_4ns29.mp4",
+    "expires_at_formatted": "17 Okt 2026, 17.08"
+  },
+  {
+    "id": "job_1792090941302_bia00",
+    "jobTitle": "Job #6 (Foto Kustom + Video Kustom)",
+    "status": "SUCCESS",
+    "createdAt": 1792090941302,
+    "expiresAt": 1792264303854,
+    "created_at_formatted": "15 Okt 2026, 19.02",
+    "step": "Selesai (Tersimpan selama 48 jam)",
+    "apiKey": "3303c0011efd43a492f99b9a6de6e212",
+    "apiKeysPool": [
+      "3303c0011efd43a492f99b9a6de6e212",
+      "3b0033a7bdce4f31a686581db63ef097",
+      "c485b84c79264d958864b1fbc3042735",
+      "fc0734d0f54340d694d92d405914565f",
+      "5b9343b64f66474ea01337cedbc1196f",
+      "0eeae9b7dc8c44c98e1a53d69677fa16",
+      "89553f1994f04b49bbddf55c208e729b"
+    ],
+    "webappId": "2101901146469191682",
+    "nodeInfoList": [
+      {
+        "nodeId": "30",
+        "fieldName": "image",
+        "fieldValue": "api/0be979bb915a95df3a440b1a2c74140f6adb6a3667cb142359fde01961303a54.jpg"
+      },
+      {
+        "nodeId": "33",
+        "fieldName": "video",
+        "fieldValue": "api/465a08960d1bc29ed93195631b25c60a4250da4b0d3e1666da7ccfb4fc67e498.mp4"
+      }
+    ],
+    "thumbnailFileName": "thumb_job_1792090941302_bia00.jpeg",
+    "thumbnailUrl": "/storage/thumbnails/thumb_job_1792090941302_bia00.jpeg",
+    "characterImageUrl": "/storage/thumbnails/thumb_job_1792090941302_bia00.jpeg",
+    "totalRunningCount": 0,
+    "totalWaitingInQueue": 0,
+    "runninghubTaskId": "2110808515033751553",
+    "consumeCoins": 112,
+    "remoteVideoUrl": "https://rh-hk-images.xiaoyaoyou.com/be3117b9d506b3e11f6d9b123feb3ac3/output/zenohub_00001_p84-audio_peyso_1792091488.mp4",
+    "videoFileName": "video_job_1792090941302_bia00.mp4",
+    "videoUrl": "/storage/videos/video_job_1792090941302_bia00.mp4",
+    "expires_at_formatted": "17 Okt 2026, 19.11"
+  },
+  {
+    "id": "job_1792092362331_ge3yz",
+    "jobTitle": "Job #7 (Foto Kustom + Video Kustom)",
+    "status": "SUCCESS",
+    "createdAt": 1792092362331,
+    "expiresAt": 1792265791559,
+    "created_at_formatted": "15 Okt 2026, 19.26",
+    "step": "Selesai (Tersimpan selama 48 jam)",
+    "apiKey": "3b0033a7bdce4f31a686581db63ef097",
+    "apiKeysPool": [
+      "3b0033a7bdce4f31a686581db63ef097",
+      "c485b84c79264d958864b1fbc3042735",
+      "fc0734d0f54340d694d92d405914565f",
+      "5b9343b64f66474ea01337cedbc1196f",
+      "0eeae9b7dc8c44c98e1a53d69677fa16",
+      "3303c0011efd43a492f99b9a6de6e212",
+      "89553f1994f04b49bbddf55c208e729b"
+    ],
+    "webappId": "2101901146469191682",
+    "nodeInfoList": [
+      {
+        "nodeId": "30",
+        "fieldName": "image",
+        "fieldValue": "api/86e6a6dbe8f8f6f5f1016b57206227cf939a2e369a3134ec48d9c55a34384f28.jpg"
+      },
+      {
+        "nodeId": "33",
+        "fieldName": "video",
+        "fieldValue": "api/b56eac4f7edf3433ae59794367cafc4ffd1eb35533ee48bebba59778daa55d2d.mp4"
+      }
+    ],
+    "thumbnailFileName": "thumb_job_1792092362331_ge3yz.jpeg",
+    "thumbnailUrl": "/storage/thumbnails/thumb_job_1792092362331_ge3yz.jpeg",
+    "characterImageUrl": "/storage/thumbnails/thumb_job_1792092362331_ge3yz.jpeg",
+    "totalRunningCount": 0,
+    "totalWaitingInQueue": 0,
+    "runninghubTaskId": "2110814475643293698",
+    "consumeCoins": 125,
+    "remoteVideoUrl": "https://rh-hk-images.xiaoyaoyou.com/132eb1171e08e7fbd6886efc49473943/output/zenohub_00001_p84-audio_ebeye_1792092977.mp4",
+    "videoFileName": "video_job_1792092362331_ge3yz.mp4",
+    "videoUrl": "/storage/videos/video_job_1792092362331_ge3yz.mp4",
+    "expires_at_formatted": "17 Okt 2026, 19.36"
+  },
+  {
+    "id": "job_2110783008321888258",
+    "jobTitle": "Job #8 (KLING Motion Control 3.0 Full HD 1080p)",
+    "status": "SUCCESS",
+    "createdAt": 1792084800000,
+    "expiresAt": 1792257600000,
+    "created_at_formatted": "15 Okt 2026, 17.20",
+    "expires_at_formatted": "17 Okt 2026, 17.20",
+    "step": "Selesai (Full HD 1080p · 249 Coins · Tersimpan 48 jam)",
+    "apiKey": "e1e874e2960a4c1fb6b44fb83c1b0db4",
+    "apiKeysPool": [
+      "e1e874e2960a4c1fb6b44fb83c1b0db4",
+      "5b9343b64f66474ea01337cedbc1196f",
+      "3b0033a7bdce4f31a686581db63ef097",
+      "c485b84c79264d958864b1fbc3042735",
+      "fc0734d0f54340d694d92d405914565f",
+      "0eeae9b7dc8c44c98e1a53d69677fa16",
+      "3303c0011efd43a492f99b9a6de6e212"
+    ],
+    "webappId": "2101901146469191682",
+    "nodeInfoList": [
+      {
+        "nodeId": "30",
+        "fieldName": "image",
+        "fieldValue": "Kling_1080p_character.jpg"
+      },
+      {
+        "nodeId": "33",
+        "fieldName": "video",
+        "fieldValue": "Kling_1080p_driving.mp4"
+      }
+    ],
+    "runninghubTaskId": "2110783008321888258",
+    "consumeCoins": 249,
+    "videoFileName": "video_job_2110783008321888258.mp4",
+    "thumbnailFileName": "thumb_job_2110783008321888258.jpg",
+    "videoUrl": "/storage/videos/video_job_2110783008321888258.mp4",
+    "thumbnailUrl": "/storage/thumbnails/thumb_job_2110783008321888258.jpg",
+    "characterImageUrl": "/storage/thumbnails/thumb_job_2110783008321888258.jpg",
+    "remoteVideoUrl": "https://rh-hk-images.xiaoyaoyou.com/f53b88cb802bce52155caa7f2367fa4b/output/Kling_Motion_Control_3.0_Replicated_by_RH_Vision_00001_p81-audio_zmyrg_1792086067.mp4",
+    "totalRunningCount": 0,
+    "totalWaitingInQueue": 0
+  }
+]
