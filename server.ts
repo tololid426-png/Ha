@@ -6,6 +6,7 @@ import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import multer from 'multer';
+import JSZip from 'jszip';
 import {
   initStorage,
   createJob,
@@ -336,6 +337,124 @@ async function createServer() {
     });
   });
 
+  // Helper to build and cache the complete, verified Motion_Studio_AI_Extension_BRE.zip on disk
+  const cachedZipPath = path.join(__dirname, 'public', 'Motion_Studio_AI_Extension_BRE.zip');
+
+  const ensureExtensionBreZipBuilt = async (forceRebuild = false): Promise<Buffer> => {
+    if (!forceRebuild && fs.existsSync(cachedZipPath)) {
+      const stat = fs.statSync(cachedZipPath);
+      if (stat.size > 200 * 1024) {
+        return fs.readFileSync(cachedZipPath);
+      }
+    }
+
+    const distDir = path.join(__dirname, 'dist');
+    const extDir = path.join(__dirname, 'extension_bre');
+
+    // Ensure fresh dist build of the FULL React Web Application
+    if (!fs.existsSync(distDir) || !fs.existsSync(path.join(distDir, 'index.html'))) {
+      try {
+        console.log('[Extension BRE Zip] Building full React application...');
+        execSync('npm run build', { stdio: 'ignore' });
+      } catch (buildErr) {
+        console.warn('[Extension BRE Zip] Build warning:', buildErr);
+      }
+    }
+
+    const zip = new JSZip();
+
+    // Recursive helper to add dist files directly into ZIP root (excluding temporary aistudio chat attachments & existing zip)
+    const addDirectoryToZip = (dirPath: string, zipFolder: JSZip) => {
+      if (!fs.existsSync(dirPath)) return;
+      const items = fs.readdirSync(dirPath);
+      for (const item of items) {
+        if (item === 'aistudio' || item.endsWith('.zip')) continue;
+        const itemPath = path.join(dirPath, item);
+        const stat = fs.statSync(itemPath);
+        if (stat.isDirectory()) {
+          addDirectoryToZip(itemPath, zipFolder.folder(item)!);
+        } else if (stat.isFile()) {
+          zipFolder.file(item, fs.readFileSync(itemPath));
+        }
+      }
+    };
+
+    // 1. Add all compiled production files of the FULL React App (index.html, assets, JS, CSS, images)
+    if (fs.existsSync(distDir)) {
+      addDirectoryToZip(distDir, zip);
+    }
+
+    // 2. Overwrite / add extension Manifest V3 and background worker at ROOT level
+    if (fs.existsSync(extDir)) {
+      const extFiles = fs.readdirSync(extDir);
+      for (const file of extFiles) {
+        const filePath = path.join(extDir, file);
+        const stat = fs.statSync(filePath);
+        if (stat.isFile()) {
+          zip.file(file, fs.readFileSync(filePath));
+        }
+      }
+    }
+
+    const zipBuffer = await zip.generateAsync({
+      type: 'nodebuffer',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 6 },
+    });
+
+    try {
+      fs.writeFileSync(cachedZipPath, zipBuffer);
+      console.log(`[Extension BRE Zip] Pre-built & cached ${cachedZipPath} (${zipBuffer.length} bytes)`);
+    } catch (writeErr) {
+      console.warn('[Extension BRE Zip] Could not write cached zip:', writeErr);
+    }
+
+    return zipBuffer;
+  };
+
+  // Pre-warm the ZIP package in background right after server start
+  setTimeout(() => {
+    ensureExtensionBreZipBuilt(true).catch((e) => console.warn('[Extension BRE Zip] Pre-warm error:', e));
+  }, 500);
+
+  // Endpoint to download the FULL Motion Studio BRE Extension ZIP file (Complete React App + Extension Manifest V3)
+  app.get('/api/extension/download-zip', async (req: Request, res: Response) => {
+    try {
+      const force = req.query.rebuild === '1';
+      const zipBuffer = await ensureExtensionBreZipBuilt(force);
+      const totalSize = zipBuffer.length;
+
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', 'attachment; filename="Motion_Studio_AI_Extension_BRE.zip"');
+      res.setHeader('Accept-Ranges', 'bytes');
+      res.setHeader('Cache-Control', 'no-store, no-transform');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+
+      // Support HTTP Range requests so mobile download managers can resume/chunk cleanly
+      const range = req.headers.range;
+      if (range) {
+        const match = range.match(/bytes=(\d*)-(\d*)/);
+        if (match) {
+          const start = match[1] ? parseInt(match[1], 10) : 0;
+          const end = match[2] ? Math.min(parseInt(match[2], 10), totalSize - 1) : totalSize - 1;
+          if (!isNaN(start) && !isNaN(end) && start <= end && start < totalSize) {
+            const chunk = zipBuffer.subarray(start, end + 1);
+            res.setHeader('Content-Range', `bytes ${start}-${end}/${totalSize}`);
+            res.setHeader('Content-Length', chunk.length);
+            res.status(206).end(chunk);
+            return;
+          }
+        }
+      }
+
+      res.setHeader('Content-Length', totalSize);
+      res.status(200).end(zipBuffer);
+    } catch (err: any) {
+      console.error('Error generating extension BRE zip:', err);
+      res.status(500).send('Gagal membuat berkas zip ekstensi BRE');
+    }
+  });
+
   // 6. Get list of recent jobs (supports ?limit=50)
   app.get('/api/jobs', (req: Request, res: Response) => {
     const limit = req.query.limit ? Math.min(100, Math.max(1, Number(req.query.limit))) : 50;
@@ -554,7 +673,7 @@ async function createServer() {
   });
 
   // API Proxy to RunningHub for uploading resource (Image or Video)
-  app.post('/api/runninghub/upload', upload.single('file'), async (req: Request, res: Response) => {
+  app.post('/api/runninghub/upload', upload.single('file') as any, async (req: Request, res: Response) => {
     try {
       const { apiKey, fileType } = req.body;
       const file = req.file;
@@ -1123,8 +1242,8 @@ async function createServer() {
     });
   }
 
-  app.listen(PORT, () => {
-    console.log(`Server listening on http://localhost:${PORT}`);
+  app.listen(Number(PORT), '0.0.0.0', () => {
+    console.log(`Server listening on http://0.0.0.0:${PORT}`);
   });
 }
 

@@ -1,0 +1,60 @@
+{
+  "manifest_version": 3,
+  "name": "Motion Studio AI - RunningHub BRE",
+  "version": "2.0.0",
+  "description": "Motion Studio AI - Motion Control Video Generator (MC1 PRO 1080p & MC2 HD) terintegrasi langsung dengan RunningHub OpenAPI.",
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "activeTab",
+    "scripting",
+    "downloads",
+    "tabs",
+    "declarativeNetRequestWithHostAccess"
+  ],
+  "host_permissions": [
+    "https://www.runninghub.ai/*",
+    "https://www.runninghub.cn/*",
+    "https://*.runninghub.ai/*",
+    "https://*.runninghub.cn/*",
+    "https://*.xiaoyaoyou.com/*",
+    "https://*.aliyuncs.com/*",
+    "https://*.myqcloud.com/*",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Motion Studio AI - RunningHub BRE",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.runninghub.ai/*",
+        "https://www.runninghub.cn/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "options_ui": {
+    "page": "index.html",
+    "open_in_tab": true
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; media-src 'self' https: http: blob: data:; img-src 'self' https: http: blob: data:; connect-src 'self' https: http: ws: wss: blob: data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:;"
+  }
+}

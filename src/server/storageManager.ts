@@ -575,7 +575,9 @@ export function cleanupExpiredJobs() {
 
   // 1. Check jobs in database
   for (const [jobId, job] of jobsMap.entries()) {
-    if (job.expiresAt && now >= job.expiresAt) {
+    const isExpiredByTimestamp = job.expiresAt && now >= job.expiresAt;
+    const isExpiredByAge = job.createdAt && now - job.createdAt >= RETENTION_MS;
+    if (isExpiredByTimestamp || isExpiredByAge) {
       // Delete video file
       if (job.videoFileName) {
         const videoPath = path.join(VIDEOS_DIR, job.videoFileName);

@@ -6,9 +6,14 @@ import { VideoPlayerPreview, JobItem } from './components/VideoPlayerPreview';
 import { ApiSettingsModal } from './components/ApiSettingsModal';
 import { CHARACTER_PRESETS, MOTION_PRESETS } from './data/presets';
 import { CharacterItem, MotionPreset } from './types/motion';
-import { AlertTriangle, CheckCircle2, XCircle, Layers, Zap, Video, Check } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, XCircle, Layers, Zap, Video, ExternalLink, Download, Loader2, Check } from 'lucide-react';
+import { isRunningAsExtension, downloadExtensionBreZip } from './utils/extensionStandaloneEngine';
 
 export default function App() {
+  const isExtension = isRunningAsExtension();
+  const [isDownloadingBreZip, setIsDownloadingBreZip] = useState(false);
+  const [breDownloadPct, setBreDownloadPct] = useState(0);
+  const [breZipSizeText, setBreZipSizeText] = useState<string | null>(null);
   // Input 1: Character Foto (Default to null for clean empty standby card)
   const [selectedCharacter, setSelectedCharacter] = useState<CharacterItem | null>(null);
   const [customCharacterUrl, setCustomCharacterUrl] = useState<string | null>(null);
@@ -303,8 +308,12 @@ export default function App() {
     }
     try {
       let fetchTarget = url;
-      // If URL is external http/https and not on same origin, proxy through /api/download to bypass CORS blocks
-      if ((url.startsWith('http://') || url.startsWith('https://')) && !url.startsWith(window.location.origin)) {
+      // If URL is external http/https and not on same origin, proxy through /api/download in Web Mode
+      if (
+        !isExtension &&
+        (url.startsWith('http://') || url.startsWith('https://')) &&
+        !url.startsWith(window.location.origin)
+      ) {
         fetchTarget = `/api/download?url=${encodeURIComponent(url)}`;
       }
 
@@ -650,7 +659,104 @@ export default function App() {
       />
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 space-y-5">
-        {/* Model Motion Pipeline Selector (Sesuai Desain Screenshot: MC1 PRO & MC2 STANDAR) */}
+        {/* BRE Extension Status / Download Banner */}
+        {isExtension ? (
+          <div className="rounded-3xl bg-gradient-to-r from-emerald-950/90 via-teal-950/90 to-slate-900/90 border border-emerald-500/30 p-4 shadow-lg text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="p-2.5 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-300">
+                <Layers className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-white tracking-wide">Mode Aplikasi Extension BRE Aktif</span>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold uppercase font-mono">
+                    Direct RunningHub Engine v2.0
+                  </span>
+                </div>
+                <p className="text-xs text-emerald-100/90 mt-0.5">
+                  Terhubung langsung ke server GPU RunningHub tanpa perantara. Upload karakter & gerakan, pantau antrian live, preview video, dan unduh MP4 langsung dari ekstensi ini!
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                const chromeObj = (window as any).chrome;
+                if (chromeObj?.tabs?.create && chromeObj?.runtime?.getURL) {
+                  chromeObj.tabs.create({ url: chromeObj.runtime.getURL('index.html') });
+                } else {
+                  window.open(window.location.href, '_blank');
+                }
+              }}
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 shrink-0 cursor-pointer"
+            >
+              <ExternalLink className="w-4 h-4" />
+              <span>Buka di Tab Penuh</span>
+            </button>
+          </div>
+        ) : (
+          <div className="rounded-3xl bg-gradient-to-r from-indigo-900/90 via-purple-900/90 to-slate-900/90 border border-indigo-500/30 p-4 shadow-lg text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3.5">
+              <div className="p-2.5 rounded-2xl bg-indigo-500/20 border border-indigo-400/30 text-indigo-300">
+                <Layers className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-white tracking-wide">Ekstensi Browser (BRE) Motion Studio AI</span>
+                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold uppercase font-mono">
+                    Full App Standalone v2.0
+                  </span>
+                </div>
+                <p className="text-xs text-indigo-200/90 mt-0.5">
+                  Unduh paket file ZIP ekstensi browser (Kiwi Browser Android / Chrome / Edge / Brave). Berisi aplikasi penuh yang terhubung langsung ke RunningHub hingga preview & download video MP4!
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0 w-full sm:w-auto">
+              <button
+                type="button"
+                disabled={isDownloadingBreZip}
+                onClick={async () => {
+                  if (isDownloadingBreZip) return;
+                  setIsDownloadingBreZip(true);
+                  setBreDownloadPct(0);
+                  setErrorNotice(null);
+                  try {
+                    const res = await downloadExtensionBreZip((pct) => setBreDownloadPct(pct));
+                    const mb = (res.sizeBytes / (1024 * 1024)).toFixed(2);
+                    setBreZipSizeText(`${mb} MB`);
+                    setSuccessNotice(`✓ File ${res.fileName} (${mb} MB) berhasil diunduh 100% lengkap & terverifikasi! Silakan pasang di Kiwi Browser / Chrome.`);
+                  } catch (err: any) {
+                    setErrorNotice(`Gagal mengunduh via verifikasi otomatis (${err.message}). Membuka link unduhan langsung...`);
+                    window.location.href = '/api/extension/download-zip';
+                  } finally {
+                    setIsDownloadingBreZip(false);
+                  }
+                }}
+                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-75 text-stone-950 font-extrabold text-xs flex items-center justify-center gap-2 shadow-md transition-all active:scale-95 shrink-0 cursor-pointer"
+              >
+                {isDownloadingBreZip ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin text-stone-950" />
+                    <span>Mengunduh ZIP Lengkap ({breDownloadPct}%)...</span>
+                  </>
+                ) : breZipSizeText ? (
+                  <>
+                    <Check className="w-4 h-4 stroke-[3] text-stone-950" />
+                    <span>Terunduh Lengkap ({breZipSizeText}) · Unduh Lagi</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4 stroke-[2.5]" />
+                    <span>Unduh Extension BRE (.zip) Lengkap</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Model Motion Pipeline Selector */}
         <div className="rounded-3xl bg-[#0b0d13] border border-stone-800/90 p-3 sm:p-3.5 shadow-xl space-y-2.5">
           <div className="flex items-center justify-between px-1.5 pt-0.5">
             <div className="flex items-center gap-2">

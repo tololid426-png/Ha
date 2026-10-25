@@ -93,6 +93,8 @@ interface JobCardProps {
   onDelete?: (jobId: string) => void;
   onRetry?: (jobId: string) => void;
   onPreviewModal?: (job: JobItem) => void;
+  onDownload?: (job: JobItem, e?: React.MouseEvent) => void;
+  isDownloading?: boolean;
   customCharacterUrl?: string | null;
 }
 
@@ -106,13 +108,20 @@ const JobCard: React.FC<JobCardProps> = ({
   onDelete,
   onRetry,
   onPreviewModal,
+  onDownload,
+  isDownloading = false,
   customCharacterUrl,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isMuted, setIsMuted] = useState<boolean>(true);
   const [videoError, setVideoError] = useState<boolean>(false);
-  const [fallbackProxyTried, setFallbackProxyTried] = useState<boolean>(false);
+  const [cardSourceIdx, setCardSourceIdx] = useState<number>(0);
+
+  useEffect(() => {
+    setCardSourceIdx(0);
+    setVideoError(false);
+  }, [job?.status, job?.videoUrl, job?.remoteVideoUrl]);
 
   // Standby / Empty Slot
   if (!job) {
@@ -172,14 +181,21 @@ const JobCard: React.FC<JobCardProps> = ({
       ? Math.min(98, Math.max(8, Math.floor((currentElapsed / 75) * 100)))
       : 0;
 
-  // Multi-tier candidate sources for video playback: local faststart stream -> remote RunningHub -> proxy
-  const candidateCardSources = [
-    job.videoUrl,
-    job.remoteVideoUrl,
-    job.remoteVideoUrl ? `/api/runninghub/proxy-video?url=${encodeURIComponent(job.remoteVideoUrl)}` : null,
-  ].filter(Boolean) as string[];
+  // Multi-tier candidate sources for video playback: remote RunningHub CDN & local stream
+  const isExt = typeof window !== 'undefined' && window.location.protocol === 'chrome-extension:';
+  const candidateCardSources = Array.from(
+    new Set(
+      (isExt
+        ? [job.remoteVideoUrl, job.videoUrl]
+        : [
+            job.videoUrl,
+            job.remoteVideoUrl,
+            job.remoteVideoUrl ? `/api/runninghub/proxy-video?url=${encodeURIComponent(job.remoteVideoUrl)}` : null,
+          ]
+      ).filter(Boolean) as string[]
+    )
+  );
 
-  const [cardSourceIdx, setCardSourceIdx] = useState<number>(0);
   const videoSrc = candidateCardSources[cardSourceIdx] || '';
 
   const handleTogglePlay = (e: React.MouseEvent) => {
@@ -481,22 +497,37 @@ const JobCard: React.FC<JobCardProps> = ({
                 <Eye className="w-3 h-3" />
               </button>
 
+              {/* Tombol Unduh Video MP4 Langsung di Kartu */}
+              {onDownload && (job.remoteVideoUrl || job.videoUrl) && (
+                <button
+                  type="button"
+                  onClick={(e) => onDownload(job, e)}
+                  disabled={isDownloading}
+                  className="p-1.5 rounded-full bg-amber-500/95 hover:bg-amber-400 border border-amber-300 text-stone-950 transition-all cursor-pointer pointer-events-auto shadow-xs disabled:opacity-50"
+                  title="Unduh Video MP4"
+                >
+                  <Download className="w-3 h-3 stroke-[2.5]" />
+                </button>
+              )}
+
               {/* Tombol Preview Langsung RunningHub AI */}
               {(job.runninghubTaskId || job.remoteVideoUrl) && (
                 <a
                   href={
-                    job.runninghubTaskId
+                    job.remoteVideoUrl
+                      ? job.remoteVideoUrl
+                      : job.runninghubTaskId
                       ? `https://www.runninghub.ai/task/${job.runninghubTaskId}`
-                      : job.remoteVideoUrl || '#'
+                      : '#'
                   }
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
                   className="px-2 py-1 rounded-full bg-purple-950/90 hover:bg-purple-800 border border-purple-500/80 text-purple-200 hover:text-white transition-all cursor-pointer pointer-events-auto shadow-xs flex items-center gap-1 text-[9px] font-bold"
-                  title="Preview Langsung di RunningHub AI"
+                  title="Preview Langsung dari RunningHub CDN"
                 >
                   <ExternalLink className="w-2.5 h-2.5 text-purple-300" />
-                  <span>Preview RH</span>
+                  <span>RH</span>
                 </a>
               )}
             </div>
@@ -553,7 +584,62 @@ export const VideoPlayerPreview: React.FC<VideoPlayerPreviewProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [previewModalJob, setPreviewModalJob] = useState<JobItem | null>(null);
+  const [downloadingJobId, setDownloadingJobId] = useState<string | null>(null);
   const totalPages = Math.max(1, Math.ceil(jobsList.length / CARDS_PER_PAGE));
+
+  const handleDownloadVideo = async (targetJob: JobItem, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const fileName = `motion_studio_${targetJob.id}.mp4`;
+    const directRemoteUrl = targetJob.remoteVideoUrl || targetJob.videoUrl || '';
+    if (!directRemoteUrl) return;
+
+    setDownloadingJobId(targetJob.id);
+    try {
+      const isExt = typeof window !== 'undefined' && window.location.protocol === 'chrome-extension:';
+      const chromeObj = typeof window !== 'undefined' ? (window as any).chrome : null;
+
+      // 1. In Chrome / Kiwi Browser Extension, try native chrome.downloads API first
+      if (isExt && chromeObj?.downloads?.download && directRemoteUrl.startsWith('http')) {
+        chromeObj.downloads.download({
+          url: directRemoteUrl,
+          filename: fileName,
+          saveAs: false,
+        });
+        setDownloadingJobId(null);
+        return;
+      }
+
+      // 2. Fetch video as Blob (supported in Extension via host_permissions & CORS CDN)
+      if (isExt || directRemoteUrl.startsWith('blob:')) {
+        const res = await fetch(directRemoteUrl);
+        if (!res.ok) throw new Error('Gagal mengunduh stream video');
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 15000);
+        setDownloadingJobId(null);
+        return;
+      }
+
+      // 3. On Web Server, use /api/jobs/:jobId/download attachment endpoint
+      const downloadEndpoint = `/api/jobs/${encodeURIComponent(targetJob.id)}/download?filename=${encodeURIComponent(fileName)}`;
+      const a = document.createElement('a');
+      a.href = downloadEndpoint;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch {
+      window.open(directRemoteUrl, '_blank', 'noopener,noreferrer');
+    } finally {
+      setDownloadingJobId(null);
+    }
+  };
 
   // Auto-sync page to show active job whenever activeJobId changes
   useEffect(() => {
@@ -588,14 +674,22 @@ export const VideoPlayerPreview: React.FC<VideoPlayerPreviewProps> = ({
     setModalSourceIdx(0);
   }, [previewModalJob?.id]);
 
+  const isExtModal = typeof window !== 'undefined' && window.location.protocol === 'chrome-extension:';
   const modalSources = previewModalJob
-    ? [
-        previewModalJob.remoteVideoUrl,
-        previewModalJob.videoUrl,
-        previewModalJob.remoteVideoUrl
-          ? `/api/runninghub/proxy-video?url=${encodeURIComponent(previewModalJob.remoteVideoUrl)}`
-          : null,
-      ].filter(Boolean) as string[]
+    ? Array.from(
+        new Set(
+          (isExtModal
+            ? [previewModalJob.remoteVideoUrl, previewModalJob.videoUrl]
+            : [
+                previewModalJob.remoteVideoUrl,
+                previewModalJob.videoUrl,
+                previewModalJob.remoteVideoUrl
+                  ? `/api/runninghub/proxy-video?url=${encodeURIComponent(previewModalJob.remoteVideoUrl)}`
+                  : null,
+              ]
+          ).filter(Boolean) as string[]
+        )
+      )
     : [];
 
   const activeModalVideoSrc = modalSources[modalSourceIdx] || modalSources[0] || '';
@@ -677,6 +771,8 @@ export const VideoPlayerPreview: React.FC<VideoPlayerPreviewProps> = ({
                     setPreviewModalJob(targetJob);
                   }
                 }}
+                onDownload={handleDownloadVideo}
+                isDownloading={job ? downloadingJobId === job.id : false}
                 customCharacterUrl={customCharacterUrl}
               />
             );
@@ -804,16 +900,15 @@ export const VideoPlayerPreview: React.FC<VideoPlayerPreviewProps> = ({
                   </a>
                 )}
                 {activeModalVideoSrc && (
-                  <a
-                    href={activeModalVideoSrc}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    download="render_video.mp4"
-                    className="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                  <button
+                    type="button"
+                    onClick={(e) => handleDownloadVideo(previewModalJob, e)}
+                    disabled={downloadingJobId === previewModalJob.id}
+                    className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm disabled:opacity-50"
                   >
                     <Download className="w-3.5 h-3.5" />
-                    <span>Unduh</span>
-                  </a>
+                    <span>{downloadingJobId === previewModalJob.id ? 'Mengunduh...' : 'Unduh MP4'}</span>
+                  </button>
                 )}
                 <button
                   type="button"
